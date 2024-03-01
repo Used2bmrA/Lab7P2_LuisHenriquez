@@ -43,12 +43,12 @@ public class Principal extends javax.swing.JFrame {
         table_tabla = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jmi_newFile = new javax.swing.JMenuItem();
         jmi_importFile = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenu4 = new javax.swing.JMenu();
         jmi_clearCMD = new javax.swing.JMenuItem();
-        jmi_crearTabla = new javax.swing.JMenuItem();
+        jmi_clearTable = new javax.swing.JMenuItem();
         jmi_refreshTree = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jmi_productStructure = new javax.swing.JMenuItem();
@@ -71,6 +71,11 @@ public class Principal extends javax.swing.JFrame {
         pp_treeMenu.add(jmi_rcLoadFile);
 
         jmi_rcRefreshTrees.setText("Refresh Trees");
+        jmi_rcRefreshTrees.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmi_rcRefreshTreesActionPerformed(evt);
+            }
+        });
         pp_treeMenu.add(jmi_rcRefreshTrees);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -147,16 +152,21 @@ public class Principal extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        jmi_importFile.setText("New File");
-        jMenu1.add(jmi_importFile);
-
-        jMenuItem2.setText("Import File");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        jmi_newFile.setText("New File");
+        jmi_newFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                jmi_newFileActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        jMenu1.add(jmi_newFile);
+
+        jmi_importFile.setText("Import File");
+        jmi_importFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmi_importFileActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jmi_importFile);
 
         jMenuBar1.add(jMenu1);
 
@@ -172,8 +182,13 @@ public class Principal extends javax.swing.JFrame {
         });
         jMenu4.add(jmi_clearCMD);
 
-        jmi_crearTabla.setText("Clear Table");
-        jMenu4.add(jmi_crearTabla);
+        jmi_clearTable.setText("Clear Table");
+        jmi_clearTable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmi_clearTableActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jmi_clearTable);
 
         jMenu2.add(jMenu4);
 
@@ -226,7 +241,31 @@ public class Principal extends javax.swing.JFrame {
         
         tf_CMD.setText("");
         
-        Commands(cmd[0], cmd[1]);
+        if (cmd.length== 3) {
+            if(cmd[0].equals("./create")){
+                if (!line.contains(" -single")) {
+                    JOptionPane.showMessageDialog(this, "Error porque faltó el \" -single\"");
+                }else{
+                    
+                    for (int i = 0; i < table_tabla.getColumnCount(); i++) {
+                        table_tabla.getValueAt(i, 0);
+                        table_tabla.getValueAt(i, 1);
+                        table_tabla.getValueAt(i, 2);
+                        table_tabla.getValueAt(i, 3);
+                        table_tabla.getValueAt(i, 4);
+                        table_tabla.getValueAt(i, 5);
+                        
+                        
+                    }
+                    
+                }
+            }else{
+                JOptionPane.showMessageDialog(this, "Comando no reconocido.");
+            }
+        }else{
+            Commands(cmd[0], cmd[1]);
+        }
+        
     }//GEN-LAST:event_bt_entreMouseClicked
 
     private void jmi_productStructureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_productStructureActionPerformed
@@ -240,7 +279,8 @@ public class Principal extends javax.swing.JFrame {
 
     private void jmi_commandsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_commandsActionPerformed
         JOptionPane.showMessageDialog(this, "Comando: .\"/load\": Carga un archivo a la tabla\n"
-                + "Comando: \"./create\": Crea un archivo partiendo de la información agregada a la tabla.\n"
+                + "Comando: \"./create\": Crea un archivo partiendo de la información agregada a la tabla. "
+                + "(Recuerde agregar \" -single\" después del nombre de archivo)\n"
                 + "Comando: \"./clear\": Vacia todos los datos contenidos en la tabla\n"
                 + "Comando: \"./refresh\": Se refrescan los árboles del programa");
     }//GEN-LAST:event_jmi_commandsActionPerformed
@@ -248,7 +288,6 @@ public class Principal extends javax.swing.JFrame {
     private void table_tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_table_tablaMouseClicked
         if (evt.getButton() == 3) {
             pp_tableMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-
         }
     }//GEN-LAST:event_table_tablaMouseClicked
 
@@ -267,25 +306,26 @@ public class Principal extends javax.swing.JFrame {
         tf_CMD.setText("");
     }//GEN-LAST:event_jmi_clearCMDActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void jmi_importFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_importFileActionPerformed
        String nombre = JOptionPane.showInputDialog("Ingrese el nombre del archivo:");
        Load(nombre);
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_jmi_importFileActionPerformed
 
     private void jmi_rcClearTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_rcClearTableActionPerformed
-        DefaultTableModel modelo  = (DefaultTableModel) table_tabla.getModel();
-        String [] columnNames = new String[6];
-        columnNames[0] = "ID";
-        columnNames[1] = "Name";
-        columnNames[2] = "Category";
-        columnNames[3] = "Price";
-        columnNames[4] = "Aisle";
-        columnNames[5] = "Bin";
-        
-        modelo = new DefaultTableModel(columnNames, 20);
-        modelo.setRowCount(20);
-        table_tabla.setModel(modelo);
+        Clear();
     }//GEN-LAST:event_jmi_rcClearTableActionPerformed
+
+    private void jmi_clearTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_clearTableActionPerformed
+        Clear();
+    }//GEN-LAST:event_jmi_clearTableActionPerformed
+
+    private void jmi_newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_newFileActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jmi_newFileActionPerformed
+
+    private void jmi_rcRefreshTreesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_rcRefreshTreesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jmi_rcRefreshTreesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -329,14 +369,14 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenuItem jmi_clearCMD;
+    private javax.swing.JMenuItem jmi_clearTable;
     private javax.swing.JMenuItem jmi_commands;
-    private javax.swing.JMenuItem jmi_crearTabla;
     private javax.swing.JMenuItem jmi_importFile;
+    private javax.swing.JMenuItem jmi_newFile;
     private javax.swing.JMenuItem jmi_productStructure;
     private javax.swing.JMenuItem jmi_rcClearTable;
     private javax.swing.JMenuItem jmi_rcLoadFile;
@@ -352,10 +392,8 @@ public class Principal extends javax.swing.JFrame {
     private void Commands(String cmd, String name) {
         if (cmd.equals("./load")) {
             Load(("./" + name));
-        }else if(cmd.equals("./create")){
-            
         }else if(cmd.equals("./clear")){
-            
+            Clear();
         }else if(cmd.equals("./refresh")){
             
         }else if(cmd.equals("")){
@@ -383,6 +421,21 @@ public class Principal extends javax.swing.JFrame {
                 modelo.addRow(arr);
         }
         
+        table_tabla.setModel(modelo);
+    }
+
+    private void Clear() {
+        DefaultTableModel modelo  = (DefaultTableModel) table_tabla.getModel();
+        String [] columnNames = new String[6];
+        columnNames[0] = "ID";
+        columnNames[1] = "Name";
+        columnNames[2] = "Category";
+        columnNames[3] = "Price";
+        columnNames[4] = "Aisle";
+        columnNames[5] = "Bin";
+        
+        modelo = new DefaultTableModel(columnNames, 20);
+        modelo.setRowCount(20);
         table_tabla.setModel(modelo);
     }
 }

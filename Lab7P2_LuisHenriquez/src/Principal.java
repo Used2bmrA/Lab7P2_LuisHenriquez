@@ -238,32 +238,33 @@ public class Principal extends javax.swing.JFrame {
     private void bt_entreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bt_entreMouseClicked
         String line = tf_CMD.getText();
         String [] cmd = line.split(" ");
-        
+       
         tf_CMD.setText("");
-        
-        if (cmd.length== 3) {
-            if(cmd[0].equals("./create")){
-                if (!line.contains(" -single")) {
-                    JOptionPane.showMessageDialog(this, "Error porque faltó el \" -single\"");
-                }else{
-                    
-                    for (int i = 0; i < table_tabla.getColumnCount(); i++) {
-                        table_tabla.getValueAt(i, 0);
-                        table_tabla.getValueAt(i, 1);
-                        table_tabla.getValueAt(i, 2);
-                        table_tabla.getValueAt(i, 3);
-                        table_tabla.getValueAt(i, 4);
-                        table_tabla.getValueAt(i, 5);
-                        
-                        
-                    }
-                    
-                }
+
+        if (cmd.length == 1) {
+            if (cmd[0].equals("./clear")) {
+                Clear();
+            }else if(cmd[0].equals("./refresh")){
+                
             }else{
                 JOptionPane.showMessageDialog(this, "Comando no reconocido.");
             }
+        }else if(cmd.length == 2){
+            if (cmd[0].equals("./load")) {
+                Load(cmd[1]);
+            }else{
+                JOptionPane.showMessageDialog(this, "Comando no reconocido.");
+            }
+        }else if(cmd.length == 3){
+            if (cmd[0].equals("./create") && cmd[2].equals("-single")) {
+                Create(cmd[1]);
+            }else{
+                JOptionPane.showMessageDialog(this, "Comando no reconocido.");
+            }
+        }else if (cmd.length == 0){
+            JOptionPane.showMessageDialog(this, "Ingrese un comando.");
         }else{
-            Commands(cmd[0], cmd[1]);
+            JOptionPane.showMessageDialog(this, "Comando no reconocido.");
         }
         
     }//GEN-LAST:event_bt_entreMouseClicked
@@ -320,7 +321,8 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_jmi_clearTableActionPerformed
 
     private void jmi_newFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_newFileActionPerformed
-        // TODO add your handling code here:
+        String nombre = JOptionPane.showInputDialog("¿Cómo se llama el archivo?");
+        Create(nombre);
     }//GEN-LAST:event_jmi_newFileActionPerformed
 
     private void jmi_rcRefreshTreesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_rcRefreshTreesActionPerformed
@@ -389,27 +391,17 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTree tree_arbol;
     // End of variables declaration//GEN-END:variables
 
-    private void Commands(String cmd, String name) {
-        if (cmd.equals("./load")) {
-            Load(("./" + name));
-        }else if(cmd.equals("./clear")){
-            Clear();
-        }else if(cmd.equals("./refresh")){
-            
-        }else if(cmd.equals("")){
-            JOptionPane.showMessageDialog(this, "Ingrese un comando.");
-        }else{
-            JOptionPane.showMessageDialog(this, "Comando no reconocido.");
-        }
-    }
+
 
     private void Load(String location) {
-        AdministrarProductos admin = new AdministrarProductos(location);
-        admin.cargarArchivo();
-        DefaultTableModel modelo = (DefaultTableModel) table_tabla.getModel();
-        modelo.setRowCount(0);
-        
-        for (int i = 0; i < admin.getProductos().size(); i++) {
+       try {
+            AdministrarProductos admin = new AdministrarProductos(location);
+
+            admin.cargarArchivo();
+            DefaultTableModel modelo = (DefaultTableModel) table_tabla.getModel();
+            modelo.setRowCount(0);
+
+            for (int i = 0; i < admin.getProductos().size(); i++) {
                 Producto productoActual = admin.getProductos().get(i);
                 Object[] arr = new Object[6];
                 arr[0] = productoActual.getId();
@@ -419,9 +411,12 @@ public class Principal extends javax.swing.JFrame {
                 arr[4] = productoActual.getAisle();
                 arr[5] = productoActual.getBin();
                 modelo.addRow(arr);
+            }
+            table_tabla.setModel(modelo);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        
-        table_tabla.setModel(modelo);
     }
 
     private void Clear() {
@@ -437,5 +432,27 @@ public class Principal extends javax.swing.JFrame {
         modelo = new DefaultTableModel(columnNames, 20);
         modelo.setRowCount(20);
         table_tabla.setModel(modelo);
+    }
+
+    private void Create(String fileName) {
+        try {
+            AdministrarProductos admin = new AdministrarProductos(fileName);
+            admin.cargarArchivo();
+
+            for (int i = 0; i < table_tabla.getRowCount(); i++) {
+                int id = (int) table_tabla.getValueAt(i, 0);
+                String name = (String) table_tabla.getValueAt(i, 1);
+                String category = (String) table_tabla.getValueAt(i, 2);
+                double precio = (double) table_tabla.getValueAt(i, 3);
+                int aisle = (int) table_tabla.getValueAt(i, 4);
+                int bin = (int) table_tabla.getValueAt(i, 5);
+
+                Producto nuevoProducto = new Producto(id, name, category, precio, aisle, bin);
+                admin.getProductos().add(nuevoProducto);
+                admin.escribirArchivo();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

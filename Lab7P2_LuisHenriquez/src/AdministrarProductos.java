@@ -60,7 +60,7 @@ public class AdministrarProductos {
         fw.close();
     }
 
-    public void cargarArchivo() {
+    public void cargarArchivo() throws IOException{
         Scanner sc2 = null;
         productos = new ArrayList();
         if (archivo.exists()) {
@@ -74,8 +74,6 @@ public class AdministrarProductos {
                 ex.printStackTrace();
             }
             sc2.close();
-        }else{
-            System.out.println("No");
         }
     }    
     

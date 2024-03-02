@@ -1,6 +1,8 @@
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -245,7 +247,7 @@ public class Principal extends javax.swing.JFrame {
             if (cmd[0].equals("./clear")) {
                 Clear();
             }else if(cmd[0].equals("./refresh")){
-                
+                Refresh();
             }else{
                 JOptionPane.showMessageDialog(this, "Comando no reconocido.");
             }
@@ -258,6 +260,8 @@ public class Principal extends javax.swing.JFrame {
         }else if(cmd.length == 3){
             if (cmd[0].equals("./create") && cmd[2].equals("-single")) {
                 Create(cmd[1]);
+                Clear();
+                JOptionPane.showMessageDialog(this, "Creado exitosamente.");
             }else{
                 JOptionPane.showMessageDialog(this, "Comando no reconocido.");
             }
@@ -440,19 +444,26 @@ public class Principal extends javax.swing.JFrame {
             admin.cargarArchivo();
 
             for (int i = 0; i < table_tabla.getRowCount(); i++) {
+
                 int id = (int) table_tabla.getValueAt(i, 0);
-                String name = (String) table_tabla.getValueAt(i, 1);
-                String category = (String) table_tabla.getValueAt(i, 2);
+                String name = table_tabla.getValueAt(i, 1).toString();
+                String category = (String) table_tabla.getValueAt(i, 2).toString();
                 double precio = (double) table_tabla.getValueAt(i, 3);
                 int aisle = (int) table_tabla.getValueAt(i, 4);
                 int bin = (int) table_tabla.getValueAt(i, 5);
-
+                
                 Producto nuevoProducto = new Producto(id, name, category, precio, aisle, bin);
                 admin.getProductos().add(nuevoProducto);
                 admin.escribirArchivo();
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void Refresh() {
+        DefaultTreeModel modelo = (DefaultTreeModel) tree_arbol.getModel();
+        DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) modelo.getRoot();
     }
 }
